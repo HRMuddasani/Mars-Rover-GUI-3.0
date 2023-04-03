@@ -1,6 +1,8 @@
 from tkinter import *
 import customtkinter
 from PIL import ImageTk, Image
+from time import sleep
+import cv2
 
 # make a window
 root = Tk()
@@ -11,6 +13,7 @@ canvas.pack(fill=BOTH, expand=True)
 # get width & height of screen
 width = root.winfo_screenwidth()
 height = root.winfo_screenheight()
+#COMMENT OUT FOR MAC ONLY
 root.resizable(False, False)
 buttons = []
 count = 0
@@ -27,9 +30,9 @@ Career_pages = ["Image Assets/Career/Slide19.jpg", "Image Assets/Career/Slide20.
                 "Image Assets/Career/Slide23.jpg", "Image Assets/Career/Slide24.jpg",
                 "Image Assets/Career/Slide25.jpg"]
 
-life_pages = ["Image Assets/Life/Slide28.jpg", "Image Assets/Life/Slide29.jpg", "Image Assets/Life/Slide30.jpg"
-              "Image Assets/Life/Slide31.jpg", "Image Assets/Life/Slide32.jpg", "Image Assets/Life/Slide33.jpg"
-              "Image Assets/Life/Slide34.jpg", "Image Assets/Life/Slide35.jpg", "Image Assets/Life/Slide36.jpg"
+life_pages = ["Image Assets/Life/Slide28.jpg", "Image Assets/Life/Slide29.jpg", "Image Assets/Life/Slide30.jpg",
+              "Image Assets/Life/Slide31.jpg", "Image Assets/Life/Slide32.jpg", "Image Assets/Life/Slide33.jpg",
+              "Image Assets/Life/Slide34.jpg", "Image Assets/Life/Slide35.jpg", "Image Assets/Life/Slide36.jpg",
               "Image Assets/Life/Slide37.jpg"]
 
 
@@ -40,10 +43,6 @@ def swap(event):
         new_background(Community_pages[count])
         count += 1
     if count == len(Community_pages) - 1:
-        root.bind("<Up>", move_up)
-        root.bind("<Down>", move_down)
-        root.bind("<Left>", select_button)
-        root.bind("<Right>", select_button)
         main_page()
         count = 0
 
@@ -64,10 +63,6 @@ def swap_life(event):
         new_background(life_pages[life_count])
         life_count += 1
     if life_count == len(life_pages) - 1:
-        root.unbind("<Right>")
-        root.unbind("<Left>")
-        root.unbind("<Up>")
-        root.unbind("<Down>")
         main_page()
         life_count = 0
 # END SWAP FUNCTIONS
@@ -138,19 +133,24 @@ def main_page():
     root.bind("<Right>", select_button)
     # Add buttons to canvas and button array
     # to edit button background it is just background
-    quit_button = customtkinter.CTkButton(master=root, text="Quit", command=root.quit, width=150, height=50)
-    quit_button.place(relx=0.5, rely=0.85)
+    life_button = customtkinter.CTkButton(master=root, text="Life Mode", command=life_mode, width=150, height=50)
+    life_button.place(relx=0.5, rely=0.8)
 
-    game1_button = customtkinter.CTkButton(master=root, text="Career Mode", command=career_mode, width=150,
+    career_button = customtkinter.CTkButton(master=root, text="Career Mode", command=career_mode, width=150,
                                            height=50, fg_color='#F69220')
-    game1_button.place(relx=0.5, rely=0.65)
+    career_button.place(relx=0.5, rely=0.6)
 
-    game2_button = customtkinter.CTkButton(master=root, text="Community Mode", command=community_mode, width=150,
+    community_button = customtkinter.CTkButton(master=root, text="Community Mode", command=community_mode, width=150,
                                            height=50)
-    game2_button.place(relx=0.5, rely=0.75)
-    buttons.append(quit_button)
-    buttons.append(game1_button)
-    buttons.append(game2_button)
+    community_button.place(relx=0.5, rely=0.7)
+
+    main_button = customtkinter.CTkButton(master=root, text="Main Game", command=main_game, width=150, height=50)
+    main_button.place(relx=0.5, rely=0.9)
+
+    buttons.append(career_button)
+    buttons.append(community_button)
+    buttons.append(life_button)
+    buttons.append(main_button)
 # END OF MAIN_PAGE()
 
 
@@ -191,6 +191,27 @@ def life_mode():
     root.bind("<Up>", swap_life)
     root.bind("<Down>", swap_life)
 # END LIFE MODE
+
+
+# Main Game Mode Start
+def main_game():
+    clear_screen()
+    canvas.pack_forget()
+    f1 = LabelFrame(root, bg="red")
+    f1.pack()
+    L1 = Label(f1, bg="red")
+    L1.pack()
+
+    # Captures video feed from stream. MUST BE ON ROVER WI-FI
+    cap = cv2.VideoCapture('rtsp://admin:MarsRover23!@192.168.2.99:88/videoMain')
+    while (True):
+        ret, frame = cap.read()
+        small_frame = cv2.resize(frame, (500, 300))
+        cv2.imshow('frame', small_frame)
+        if cv2.waitKey(1) & 0xFF == ord('q'):
+            cv2.destroyAllWindows()
+            break
+# END MAIN GAME
 
 
 main_page()
