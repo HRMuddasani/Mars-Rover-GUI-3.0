@@ -1,8 +1,10 @@
+# Packages needed: pyserial, customtkinter, opencv-python, Pillow, pygame, pip, 
 from tkinter import *
 import customtkinter
 from PIL import ImageTk, Image
-from time import sleep
+import time
 import cv2
+import serial
 
 # make a window
 root = Tk()
@@ -13,7 +15,7 @@ canvas.pack(fill=BOTH, expand=True)
 # get width & height of screen
 width = root.winfo_screenwidth()
 height = root.winfo_screenheight()
-#COMMENT OUT FOR MAC ONLY
+# COMMENT OUT FOR MAC ONLY
 root.resizable(False, False)
 buttons = []
 count = 0
@@ -34,6 +36,23 @@ life_pages = ["Image Assets/Life/Slide28.jpg", "Image Assets/Life/Slide29.jpg", 
               "Image Assets/Life/Slide31.jpg", "Image Assets/Life/Slide32.jpg", "Image Assets/Life/Slide33.jpg",
               "Image Assets/Life/Slide34.jpg", "Image Assets/Life/Slide35.jpg", "Image Assets/Life/Slide36.jpg",
               "Image Assets/Life/Slide37.jpg"]
+
+
+# Create a Serial object
+serial_port = serial.Serial()
+
+
+def ble_connect():
+    # Set the port name
+    serial_port.port = "COM8"  # Replace with the desired port name
+    try:
+        if not serial_port.is_open:
+            # Open the serial port
+            serial_port.open()
+            # Perform your communication with the serial port here
+            # e.g., send/receive data
+    except Exception as e:
+        print(f"Error: {e}")
 
 
 # SWAP FUNCTIONS changes background to represent slide for specific mode
@@ -65,6 +84,8 @@ def swap_life(event):
     if life_count == len(life_pages) - 1:
         main_page()
         life_count = 0
+
+
 # END SWAP FUNCTIONS
 
 
@@ -72,23 +93,25 @@ def swap_life(event):
 def move_up(event):
     global buttons
     global move_count
-    buttons[move_count].configure(fg_color="blue")
+    buttons[move_count].configure(fg_color="#F69220")
     if move_count == 0:
         move_count = len(buttons) - 1
     else:
         move_count -= 1
-    buttons[move_count].configure(fg_color="white")
+    buttons[move_count].configure(fg_color="#4169E1")
 
 
 def move_down(event):
     global buttons
     global move_count
-    buttons[move_count].configure(fg_color="blue")
+    buttons[move_count].configure(fg_color="#F69220")
     if move_count == len(buttons) - 1:
         move_count = 0
     else:
         move_count += 1
-    buttons[move_count].configure(fg_color="white")
+    buttons[move_count].configure(fg_color="#4169E1")
+
+
 # END MOVE FUNCTIONS
 
 
@@ -133,24 +156,31 @@ def main_page():
     root.bind("<Right>", select_button)
     # Add buttons to canvas and button array
     # to edit button background it is just background
-    life_button = customtkinter.CTkButton(master=root, text="Life Mode", command=life_mode, width=150, height=50)
-    life_button.place(relx=0.5, rely=0.8)
+    life_button = customtkinter.CTkButton(master=root, text="Life Mode", command=life_mode, width=250, height=50,
+                                          corner_radius=10, bg_color='#E05035', fg_color='#F69220',
+                                          font=('Helvetica bold', 16))
+    life_button.place(relx=0.42, rely=0.825)
 
-    career_button = customtkinter.CTkButton(master=root, text="Career Mode", command=career_mode, width=150,
-                                           height=50, fg_color='#F69220')
-    career_button.place(relx=0.5, rely=0.6)
+    career_button = customtkinter.CTkButton(master=root, text="Career Mode", command=career_mode, width=250,
+                                            height=50, fg_color='#F69220', corner_radius=10, bg_color='#E05035',
+                                            font=('Helvetica bold', 16))
+    career_button.place(relx=0.42, rely=0.675)
 
-    community_button = customtkinter.CTkButton(master=root, text="Community Mode", command=community_mode, width=150,
-                                           height=50)
-    community_button.place(relx=0.5, rely=0.7)
+    community_button = customtkinter.CTkButton(master=root, text="Community Mode", command=community_mode, width=250,
+                                               height=50, corner_radius=10, bg_color='#E05035', fg_color='#F69220',
+                                               font=('Helvetica bold', 16))
+    community_button.place(relx=0.42, rely=0.75)
 
-    main_button = customtkinter.CTkButton(master=root, text="Main Game", command=main_game, width=150, height=50)
-    main_button.place(relx=0.5, rely=0.9)
+    main_button = customtkinter.CTkButton(master=root, text="Main Game", command=main_game, width=250, height=50,
+                                          corner_radius=10, bg_color='#E05035', fg_color='#F69220',
+                                          font=('Helvetica bold', 16))
+    main_button.place(relx=0.42, rely=0.9)
 
+    buttons.append(main_button)
     buttons.append(career_button)
     buttons.append(community_button)
     buttons.append(life_button)
-    buttons.append(main_button)
+    move_up(None)
 # END OF MAIN_PAGE()
 
 
@@ -164,6 +194,8 @@ def community_mode():
     root.bind("<Right>", swap)
     root.bind("<Up>", swap)
     root.bind("<Down>", swap)
+
+
 # END CAREER MODE FUNCTION
 
 
@@ -193,26 +225,121 @@ def life_mode():
 # END LIFE MODE
 
 
+# MAIN GAME WRITES
+def write_left():
+    serial_port.write("l")
+# End Write Left
+
+
+def write_front():
+    serial_port.write("f")
+# End Write Front
+
+
+def write_right():
+    serial_port.write("r")
+# End Write Front
+
+
+def write_back():
+    serial_port.write("b")
+# End Write Front
+
+
 # Main Game Mode Start
 def main_game():
-    clear_screen()
-    canvas.pack_forget()
-    f1 = LabelFrame(root, bg="red")
-    f1.pack()
-    L1 = Label(f1, bg="red")
-    L1.pack()
 
-    # Captures video feed from stream. MUST BE ON ROVER WI-FI
-    cap = cv2.VideoCapture('rtsp://admin:MarsRover23!@192.168.2.99:88/videoMain')
-    while (True):
+    root.bind("<Left>", write_left)
+    root.bind("<Right>", write_right)
+    root.bind("<Up>", write_front)
+    root.bind("<Down>", write_back)
+
+    clear_screen()
+    # Use image as background
+    bg = PhotoImage(file="Image Assets/Surface.png")
+    # Use secondary image for frame under camera feed
+    image = Image.open('Image Assets/Imagination.PNG')
+    img2 = image.resize((930, 350))
+    test = ImageTk.PhotoImage(img2)
+
+    # Create Frame with background of image
+    frame1 = Frame(root, bg="white")
+
+    # Add background image to fill screen
+    label1 = Label(frame1, image=bg)
+    label1.pack()
+    # Add secondary frame under camera feed
+    label2 = Label(frame1, image=test)
+    label2.place(x=0, y=525)
+
+    # Add text to frame
+    Label(frame1, text="MISSION", bg="black", foreground="white", font=('Helvetica bold', 35)).place(x=1150, y=50)
+    frame1.pack(side="top", fill=BOTH, expand=False)
+    Label(frame1, text="1. Use the joystick to move the robot", bg="black", foreground="white",
+          font=('Helvetica bold', 20)).place(x=1050, y=125)
+    Label(frame1, text="2. Explore Mars to your hearts content", bg="black", foreground="white",
+          font=('Helvetica bold', 20)).place(x=1050, y=175)
+    Label(frame1, text="3. You will have 90 seconds", bg="black", foreground="white",
+          font=('Helvetica bold', 20)).place(x=1050, y=225)
+
+    # Add Countdown Label
+    timer_label = Label(frame1, text="Time remaining: 90 seconds", bg="black", foreground="white",
+                        font=('Helvetica bold', 30))
+    timer_label.place(x=1000, y=800)
+
+    # forget canvas to allow frame to show in entirety
+    canvas.pack_forget()
+
+    # Captures video feed from stream. MUST BE ON ROVER WI-FI:
+    # Put in videocapture: rtsp://admin:MarsRover23!@192.168.2.99:88/videoMain
+    cap = cv2.VideoCapture(0)
+    start = time.time()
+    timer_duration = 90
+    last_elapsed_time = 0
+
+    # Camera Feed Loop
+    while time.time() - start < 5:
+        # Capture frame of feed
         ret, frame = cap.read()
-        small_frame = cv2.resize(frame, (500, 300))
-        cv2.imshow('frame', small_frame)
-        if cv2.waitKey(1) & 0xFF == ord('q'):
-            cv2.destroyAllWindows()
+        if not ret:
             break
+        # Resize the frame and then show
+        small_frame = cv2.resize(frame, (930, 500))
+        cv2.imshow("MARS FEED", small_frame)
+        if cv2.waitKey(1) & 0xFF == ord('q'):
+            break
+        root.update()
+        # Calculate elapsed time
+        elapsed_time = int(time.time() - start)
+        # Update timer label only if a whole second has elapsed
+        if elapsed_time > last_elapsed_time:
+            remaining_time = int(timer_duration - elapsed_time)
+            timer_label.config(text=f"Time remaining: {remaining_time} seconds")
+            # Store current elapsed time for comparison in next iteration
+            last_elapsed_time = elapsed_time
+
+    # Close video capture
+    cap.release()
+    cv2.destroyAllWindows()
+    # Set focus back to root because video feed causes popup that will alt tab, it so need to set focus
+    root.focus_force()
+    Label(frame1, text="MISSION COMPLETE!!!\nReturning to Main Menu", bg="black", fg="red",
+          font=('Helvetica bold', 50)).place(x=200, y=200)
+    # Adds the label to screen and gets rid of camera feed and pauses for 3 seconds
+    root.update()
+    time.sleep(3)
+    # Repack canvas to allow for slides and main screen
+    canvas.pack(fill=BOTH, expand=True)
+    # Get rid of Frame
+    frame1.pack_forget()
+    frame1.destroy()
+    # Call main page
+    main_page()
 # END MAIN GAME
 
+
+# Call the ble_connect() function to establish the serial port connection
+ble_connect()
 
 main_page()
 
