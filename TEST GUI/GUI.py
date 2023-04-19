@@ -5,6 +5,7 @@ from PIL import ImageTk, Image
 import time
 import cv2
 import serial
+import pygame
 
 # make a window
 root = Tk()
@@ -41,7 +42,20 @@ life_pages = ["Image Assets/Life/Slide28.jpg", "Image Assets/Life/Slide29.jpg", 
 # Create a Serial object
 serial_port = serial.Serial()
 
+# Joystick
+#pygame.init()
 
+# Set up joystick
+#pygame.joystick.init()
+#joystick = pygame.joystick.Joystick(0)
+#joystick.init()
+
+# Define joystick axis constants
+JOY_AXIS_X = 0
+JOY_AXIS_Y = 1
+JOYAXISMOTION = 7
+
+# Bluetooth connection to Rover
 def ble_connect():
     # Set the port name
     serial_port.port = "COM8"  # Replace with the desired port name
@@ -150,10 +164,7 @@ def main_page():
     move_count = 0
     # Create background
     new_background("Image Assets/MainScreen].jpg")
-    root.bind("<Up>", move_up)
-    root.bind("<Down>", move_down)
-    root.bind("<Left>", select_button)
-    root.bind("<Right>", select_button)
+
     # Add buttons to canvas and button array
     # to edit button background it is just background
     life_button = customtkinter.CTkButton(master=root, text="Life Mode", command=life_mode, width=250, height=50,
@@ -181,6 +192,11 @@ def main_page():
     buttons.append(community_button)
     buttons.append(life_button)
     move_up(None)
+    root.bind("<Up>", move_up)
+    root.bind("<Down>", move_down)
+    root.bind("<Left>", select_button)
+    root.bind("<Right>", select_button)
+
 # END OF MAIN_PAGE()
 
 
@@ -226,22 +242,23 @@ def life_mode():
 
 
 # MAIN GAME WRITES
-def write_left():
-    serial_port.write("l")
+def write_left(event):
+    print("Left\n")
+    #serial_port.write("l")
 # End Write Left
 
 
-def write_front():
+def write_front(event):
     serial_port.write("f")
 # End Write Front
 
 
-def write_right():
+def write_right(event):
     serial_port.write("r")
 # End Write Front
 
 
-def write_back():
+def write_back(event):
     serial_port.write("b")
 # End Write Front
 
@@ -258,8 +275,8 @@ def main_game():
     # Use image as background
     bg = PhotoImage(file="Image Assets/Surface.png")
     # Use secondary image for frame under camera feed
-    image = Image.open('Image Assets/Imagination.PNG')
-    img2 = image.resize((930, 350))
+    image = Image.open('Image Assets/GUI icons.png')
+    img2 = image.resize((930, 300))
     test = ImageTk.PhotoImage(img2)
 
     # Create Frame with background of image
@@ -270,7 +287,7 @@ def main_game():
     label1.pack()
     # Add secondary frame under camera feed
     label2 = Label(frame1, image=test)
-    label2.place(x=0, y=525)
+    label2.place(x=0, y=575)
 
     # Add text to frame
     Label(frame1, text="MISSION", bg="black", foreground="white", font=('Helvetica bold', 35)).place(x=1150, y=50)
@@ -304,11 +321,30 @@ def main_game():
         if not ret:
             break
         # Resize the frame and then show
-        small_frame = cv2.resize(frame, (930, 500))
+        small_frame = cv2.resize(frame, (930, 550))
         cv2.imshow("MARS FEED", small_frame)
-        if cv2.waitKey(1) & 0xFF == ord('q'):
-            break
-        root.update()
+        root.focus_force()
+        # Handle joystick input
+        #for event in pygame.event.get():
+         #   if event.type == JOYAXISMOTION:
+          #      if event.axis == JOY_AXIS_X:
+           #         if event.value > 0:
+                        # Handle right joystick movement
+                        # Do something for right movement
+            #            pass
+             #       elif event.value < 0:
+                        # Handle left joystick movement
+                        # Do something for left movement
+               #         pass
+              #  elif event.axis == JOY_AXIS_Y:
+               #     if event.value > 0:
+                        # Handle down joystick movement
+                        # Do something for down movement
+                #        pass
+                 #   elif event.value < 0:
+                        # Handle up joystick movement
+                        # Do something for up movement
+                  #      pass
         # Calculate elapsed time
         elapsed_time = int(time.time() - start)
         # Update timer label only if a whole second has elapsed
@@ -317,6 +353,9 @@ def main_game():
             timer_label.config(text=f"Time remaining: {remaining_time} seconds")
             # Store current elapsed time for comparison in next iteration
             last_elapsed_time = elapsed_time
+        # Call the main event loop of Tkinter
+        root.update_idletasks()
+        root.update()
 
     # Close video capture
     cap.release()
