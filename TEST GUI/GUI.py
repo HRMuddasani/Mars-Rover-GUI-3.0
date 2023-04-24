@@ -403,7 +403,7 @@ def main_game():
     canvas.pack_forget()
 
     # Captures video feed from stream. MUST BE ON ROVER WI-FI:
-    # Put in videocapture: rtsp://admin:MarsRover23!@192.168.2.99:88/videoMain
+    # Put in videocapture: 'rtsp://admin:MarsRover23!@192.168.2.99:88/videoMain' or in ""
     cap = cv2.VideoCapture(0)
     start = time.time()
     timer_duration = 90
