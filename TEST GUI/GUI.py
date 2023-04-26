@@ -182,10 +182,6 @@ def main_page():
     buttons.append(community_button)
     buttons.append(life_button)
     move_up(None)
-    root.bind("<Up>", move_up)
-    root.bind("<Down>", move_down)
-    root.bind("<Left>", select_button)
-    root.bind("<Right>", select_button)
     root.update()
 # Main loop for reading joystick input
     while True:
@@ -214,6 +210,11 @@ def main_page():
                 root.update()
                 pygame.time.delay(50)
                 pygame.event.pump()
+        root.bind("<Up>", move_up)
+        root.bind("<Down>", move_down)
+        root.bind("<Left>", select_button)
+        root.bind("<Right>", select_button)
+        root.update()
 
 # END OF MAIN_PAGE()
 
@@ -249,8 +250,11 @@ def community_mode():
                 root.update()
                 pygame.time.delay(50)
                 pygame.event.pump()
-
-
+        root.bind("<Up>", swap)
+        root.bind("<Down>", swap)
+        root.bind("<Left>", swap)
+        root.bind("<Right>", swap)
+        root.update()
 # END CAREER MODE FUNCTION
 
 
@@ -285,7 +289,11 @@ def career_mode():
                 root.update()
                 pygame.time.delay(50)
                 pygame.event.pump()
-
+        root.bind("<Up>", swap_career)
+        root.bind("<Down>", swap_career)
+        root.bind("<Left>", swap_career)
+        root.bind("<Right>", swap_career)
+        root.update()
 
 # END Career Mode
 
@@ -321,7 +329,11 @@ def life_mode():
                 root.update()
                 pygame.time.delay(50)
                 pygame.event.pump()
-
+        root.bind("<Up>", swap_life)
+        root.bind("<Down>", swap_life)
+        root.bind("<Left>", swap_life)
+        root.bind("<Right>", swap_life)
+        root.update()
 
 # END LIFE MODE
 
@@ -361,11 +373,6 @@ def write_back(event):
 
 # Main Game Mode Start
 def main_game():
-    root.bind("<Left>", write_left)
-    root.bind("<Right>", write_right)
-    root.bind("<Up>", write_front)
-    root.bind("<Down>", write_back)
-
     clear_screen()
     # Use image as background
     bg = PhotoImage(file="Image Assets/Surface.png")
@@ -451,8 +458,11 @@ def main_game():
                         write_front(None)
         pygame.time.delay(50)
         pygame.event.pump()
+        root.bind("<Left>", write_left)
+        root.bind("<Right>", write_right)
+        root.bind("<Up>", write_front)
+        root.bind("<Down>", write_back)
         root.update()
-        #root.update_idletasks()
 
     # Close video capture
     cap.release()
@@ -476,7 +486,7 @@ def main_game():
 
 
 # Call the ble_connect() function to establish the serial port connection
-bleConnect()
+#bleConnect()
 
 # Initialize pygame
 pygame.init()
