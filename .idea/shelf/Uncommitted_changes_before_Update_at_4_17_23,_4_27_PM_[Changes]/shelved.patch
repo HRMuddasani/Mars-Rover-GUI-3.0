@@ -1,0 +1,292 @@
+Index: TEST GUI/GUI.py
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>from tkinter import *\r\nimport customtkinter\r\nfrom PIL import ImageTk, Image\r\n\r\n# make a window\r\nroot = Tk()\r\nroot.wm_attributes('-fullscreen', 'True')\r\ncanvas = Canvas(root, bg='white', highlightthickness=0)\r\ncanvas.pack(fill=BOTH, expand=True)\r\n\r\n# get width & height of screen\r\nwidth = root.winfo_screenwidth()\r\nheight = root.winfo_screenheight()\r\nroot.resizable(False, False)\r\nbuttons = []\r\ncount = 0\r\ncareer_count = 0\r\nlife_count = 0\r\nmove_count = 0\r\n\r\nCommunity_pages = [\"Image Assets/Curiosity/Slide4.jpg\", \"Image Assets/Curiosity/Slide5.jpg\",\r\n                   \"Image Assets/Curiosity/Slide6.jpg\", \"Image Assets/Curiosity/Slide7.jpg\",\r\n                   \"Image Assets/Curiosity/Slide8.jpg\", \"Image Assets/Curiosity/Slide9.jpg\"]\r\n\r\nCareer_pages = [\"Image Assets/Career/Slide19.jpg\", \"Image Assets/Career/Slide20.jpg\",\r\n                \"Image Assets/Career/Slide21.jpg\", \"Image Assets/Career/Slide22.jpg\",\r\n                \"Image Assets/Career/Slide23.jpg\", \"Image Assets/Career/Slide24.jpg\",\r\n                \"Image Assets/Career/Slide25.jpg\"]\r\n\r\nlife_pages = [\"Image Assets/Life/Slide28.jpg\", \"Image Assets/Life/Slide29.jpg\", \"Image Assets/Life/Slide30.jpg\"\r\n              \"Image Assets/Life/Slide31.jpg\", \"Image Assets/Life/Slide32.jpg\", \"Image Assets/Life/Slide33.jpg\"\r\n              \"Image Assets/Life/Slide34.jpg\", \"Image Assets/Life/Slide35.jpg\", \"Image Assets/Life/Slide36.jpg\"\r\n              \"Image Assets/Life/Slide37.jpg\"]\r\n\r\n\r\n# SWAP FUNCTIONS changes background to represent slide for specific mode\r\ndef swap(event):\r\n    global count\r\n    if not count == len(Community_pages) - 1:\r\n        new_background(Community_pages[count])\r\n        count += 1\r\n    if count == len(Community_pages) - 1:\r\n        root.bind(\"<Up>\", move_up)\r\n        root.bind(\"<Down>\", move_down)\r\n        root.bind(\"<Left>\", select_button)\r\n        root.bind(\"<Right>\", select_button)\r\n        main_page()\r\n        count = 0\r\n\r\n\r\ndef swap_career(event):\r\n    global career_count\r\n    if not career_count == len(Career_pages) - 1:\r\n        new_background(Career_pages[career_count])\r\n        career_count += 1\r\n    if career_count == len(Career_pages) - 1:\r\n        main_page()\r\n        career_count = 0\r\n\r\n\r\ndef swap_life(event):\r\n    global life_count\r\n    if not life_count == len(life_pages) - 1:\r\n        new_background(life_pages[life_count])\r\n        life_count += 1\r\n    if life_count == len(life_pages) - 1:\r\n        root.unbind(\"<Right>\")\r\n        root.unbind(\"<Left>\")\r\n        root.unbind(\"<Up>\")\r\n        root.unbind(\"<Down>\")\r\n        main_page()\r\n        life_count = 0\r\n# END SWAP FUNCTIONS\r\n\r\n\r\n# Hover Functions for main page swap between buttons\r\ndef move_up(event):\r\n    global buttons\r\n    global move_count\r\n    buttons[move_count].configure(fg_color=\"blue\")\r\n    if move_count == 0:\r\n        move_count = len(buttons) - 1\r\n    else:\r\n        move_count -= 1\r\n    buttons[move_count].configure(fg_color=\"white\")\r\n\r\n\r\ndef move_down(event):\r\n    global buttons\r\n    global move_count\r\n    buttons[move_count].configure(fg_color=\"blue\")\r\n    if move_count == len(buttons) - 1:\r\n        move_count = 0\r\n    else:\r\n        move_count += 1\r\n    buttons[move_count].configure(fg_color=\"white\")\r\n# END MOVE FUNCTIONS\r\n\r\n\r\n# Select Function invokes button function in main with left or right arrow key\r\ndef select_button(event):\r\n    global buttons\r\n    global move_count\r\n    buttons[move_count].invoke()\r\n# END SELECT FUNCTION\r\n\r\n\r\n# Clear screen function removes buttons\r\ndef clear_screen():\r\n    global buttons\r\n    for b in buttons:\r\n        b.place_forget()\r\n    buttons.clear()\r\n# END CLEAR_SCREEN\r\n\r\n\r\n# Resize and make image fill screen as background\r\ndef new_background(path):\r\n    # needs to be global otherwise won't be displayed on canvas IDK why, but it works with it global\r\n    global img\r\n    temp = Image.open(path)\r\n    img2 = temp.resize((width, height))\r\n    img = ImageTk.PhotoImage(img2)\r\n    canvas.create_image(width / 2, height / 2, image=img)\r\n# END NEW_BACKGROUND()\r\n\r\n\r\n# MAIN PAGE FUNCTION START\r\ndef main_page():\r\n    global buttons\r\n    global move_count\r\n    move_count = 0\r\n    # Create background\r\n    new_background(\"Image Assets/MainScreen].jpg\")\r\n    root.bind(\"<Up>\", move_up)\r\n    root.bind(\"<Down>\", move_down)\r\n    root.bind(\"<Left>\", select_button)\r\n    root.bind(\"<Right>\", select_button)\r\n    # Add buttons to canvas and button array\r\n    # to edit button background it is just background\r\n    quit_button = customtkinter.CTkButton(master=root, text=\"Quit\", command=root.quit, width=150, height=50)\r\n    quit_button.place(relx=0.5, rely=0.85)\r\n\r\n    game1_button = customtkinter.CTkButton(master=root, text=\"Career Mode\", command=career_mode, width=150,\r\n                                           height=50, fg_color='#F69220')\r\n    game1_button.place(relx=0.5, rely=0.65)\r\n\r\n    game2_button = customtkinter.CTkButton(master=root, text=\"Community Mode\", command=community_mode, width=150,\r\n                                           height=50)\r\n    game2_button.place(relx=0.5, rely=0.75)\r\n    buttons.append(quit_button)\r\n    buttons.append(game1_button)\r\n    buttons.append(game2_button)\r\n# END OF MAIN_PAGE()\r\n\r\n\r\n# COMMUNITY MODE FUNCTION\r\ndef community_mode():\r\n    # clear screen\r\n    clear_screen()\r\n    # Create background\r\n    new_background(\"Image Assets/Curiosity/Slide3.jpg\")\r\n    root.bind(\"<Left>\", swap)\r\n    root.bind(\"<Right>\", swap)\r\n    root.bind(\"<Up>\", swap)\r\n    root.bind(\"<Down>\", swap)\r\n# END CAREER MODE FUNCTION\r\n\r\n\r\n# Career Mode function\r\ndef career_mode():\r\n    # clear screen\r\n    clear_screen()\r\n    # Create background\r\n    new_background(\"Image Assets/Career/Slide18.jpg\")\r\n    root.bind(\"<Left>\", swap_career)\r\n    root.bind(\"<Right>\", swap_career)\r\n    root.bind(\"<Up>\", swap_career)\r\n    root.bind(\"<Down>\", swap_career)\r\n# END Career Mode\r\n\r\n\r\n# Life Mode Function\r\ndef life_mode():\r\n    # clear screen\r\n    clear_screen()\r\n    # Create background\r\n    new_background(\"Image Assets/Life/Slide27.jpg\")\r\n    root.bind(\"<Left>\", swap_life)\r\n    root.bind(\"<Right>\", swap_life)\r\n    root.bind(\"<Up>\", swap_life)\r\n    root.bind(\"<Down>\", swap_life)\r\n# END LIFE MODE\r\n\r\n\r\nmain_page()\r\n\r\nroot.mainloop()\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/TEST GUI/GUI.py b/TEST GUI/GUI.py
+--- a/TEST GUI/GUI.py	
++++ b/TEST GUI/GUI.py	
+@@ -1,6 +1,10 @@
++# Packages needed: pyserial, customtkinter, opencv-python, Pillow, pygame, pip,
+ from tkinter import *
+ import customtkinter
+ from PIL import ImageTk, Image
++import time
++import cv2
++import serial
+ 
+ # make a window
+ root = Tk()
+@@ -11,6 +15,7 @@
+ # get width & height of screen
+ width = root.winfo_screenwidth()
+ height = root.winfo_screenheight()
++# COMMENT OUT FOR MAC ONLY
+ root.resizable(False, False)
+ buttons = []
+ count = 0
+@@ -27,12 +32,29 @@
+                 "Image Assets/Career/Slide23.jpg", "Image Assets/Career/Slide24.jpg",
+                 "Image Assets/Career/Slide25.jpg"]
+ 
+-life_pages = ["Image Assets/Life/Slide28.jpg", "Image Assets/Life/Slide29.jpg", "Image Assets/Life/Slide30.jpg"
+-              "Image Assets/Life/Slide31.jpg", "Image Assets/Life/Slide32.jpg", "Image Assets/Life/Slide33.jpg"
+-              "Image Assets/Life/Slide34.jpg", "Image Assets/Life/Slide35.jpg", "Image Assets/Life/Slide36.jpg"
++life_pages = ["Image Assets/Life/Slide28.jpg", "Image Assets/Life/Slide29.jpg", "Image Assets/Life/Slide30.jpg",
++              "Image Assets/Life/Slide31.jpg", "Image Assets/Life/Slide32.jpg", "Image Assets/Life/Slide33.jpg",
++              "Image Assets/Life/Slide34.jpg", "Image Assets/Life/Slide35.jpg", "Image Assets/Life/Slide36.jpg",
+               "Image Assets/Life/Slide37.jpg"]
+ 
+ 
++# Create a Serial object
++serial_port = serial.Serial()
++
++
++def ble_connect():
++    # Set the port name
++    serial_port.port = "COM8"  # Replace with the desired port name
++    try:
++        if not serial_port.is_open:
++            # Open the serial port
++            serial_port.open()
++            # Perform your communication with the serial port here
++            # e.g., send/receive data
++    except Exception as e:
++        print(f"Error: {e}")
++
++
+ # SWAP FUNCTIONS changes background to represent slide for specific mode
+ def swap(event):
+     global count
+@@ -40,10 +62,6 @@
+         new_background(Community_pages[count])
+         count += 1
+     if count == len(Community_pages) - 1:
+-        root.bind("<Up>", move_up)
+-        root.bind("<Down>", move_down)
+-        root.bind("<Left>", select_button)
+-        root.bind("<Right>", select_button)
+         main_page()
+         count = 0
+ 
+@@ -64,12 +82,10 @@
+         new_background(life_pages[life_count])
+         life_count += 1
+     if life_count == len(life_pages) - 1:
+-        root.unbind("<Right>")
+-        root.unbind("<Left>")
+-        root.unbind("<Up>")
+-        root.unbind("<Down>")
+         main_page()
+         life_count = 0
++
++
+ # END SWAP FUNCTIONS
+ 
+ 
+@@ -77,23 +93,25 @@
+ def move_up(event):
+     global buttons
+     global move_count
+-    buttons[move_count].configure(fg_color="blue")
++    buttons[move_count].configure(fg_color="#F69220")
+     if move_count == 0:
+         move_count = len(buttons) - 1
+     else:
+         move_count -= 1
+-    buttons[move_count].configure(fg_color="white")
++    buttons[move_count].configure(fg_color="#4169E1")
+ 
+ 
+ def move_down(event):
+     global buttons
+     global move_count
+-    buttons[move_count].configure(fg_color="blue")
++    buttons[move_count].configure(fg_color="#F69220")
+     if move_count == len(buttons) - 1:
+         move_count = 0
+     else:
+         move_count += 1
+-    buttons[move_count].configure(fg_color="white")
++    buttons[move_count].configure(fg_color="#4169E1")
++
++
+ # END MOVE FUNCTIONS
+ 
+ 
+@@ -138,19 +156,31 @@
+     root.bind("<Right>", select_button)
+     # Add buttons to canvas and button array
+     # to edit button background it is just background
+-    quit_button = customtkinter.CTkButton(master=root, text="Quit", command=root.quit, width=150, height=50)
+-    quit_button.place(relx=0.5, rely=0.85)
++    life_button = customtkinter.CTkButton(master=root, text="Life Mode", command=life_mode, width=250, height=50,
++                                          corner_radius=10, bg_color='#E05035', fg_color='#F69220',
++                                          font=('Helvetica bold', 16))
++    life_button.place(relx=0.42, rely=0.825)
++
++    career_button = customtkinter.CTkButton(master=root, text="Career Mode", command=career_mode, width=250,
++                                            height=50, fg_color='#F69220', corner_radius=10, bg_color='#E05035',
++                                            font=('Helvetica bold', 16))
++    career_button.place(relx=0.42, rely=0.675)
+ 
+-    game1_button = customtkinter.CTkButton(master=root, text="Career Mode", command=career_mode, width=150,
+-                                           height=50, fg_color='#F69220')
+-    game1_button.place(relx=0.5, rely=0.65)
++    community_button = customtkinter.CTkButton(master=root, text="Community Mode", command=community_mode, width=250,
++                                               height=50, corner_radius=10, bg_color='#E05035', fg_color='#F69220',
++                                               font=('Helvetica bold', 16))
++    community_button.place(relx=0.42, rely=0.75)
+ 
+-    game2_button = customtkinter.CTkButton(master=root, text="Community Mode", command=community_mode, width=150,
+-                                           height=50)
+-    game2_button.place(relx=0.5, rely=0.75)
+-    buttons.append(quit_button)
+-    buttons.append(game1_button)
+-    buttons.append(game2_button)
++    main_button = customtkinter.CTkButton(master=root, text="Main Game", command=main_game, width=250, height=50,
++                                          corner_radius=10, bg_color='#E05035', fg_color='#F69220',
++                                          font=('Helvetica bold', 16))
++    main_button.place(relx=0.42, rely=0.9)
++
++    buttons.append(main_button)
++    buttons.append(career_button)
++    buttons.append(community_button)
++    buttons.append(life_button)
++    move_up(None)
+ # END OF MAIN_PAGE()
+ 
+ 
+@@ -164,6 +194,8 @@
+     root.bind("<Right>", swap)
+     root.bind("<Up>", swap)
+     root.bind("<Down>", swap)
++
++
+ # END CAREER MODE FUNCTION
+ 
+ 
+@@ -193,6 +225,121 @@
+ # END LIFE MODE
+ 
+ 
++# MAIN GAME WRITES
++def write_left():
++    serial_port.write("l")
++# End Write Left
++
++
++def write_front():
++    serial_port.write("f")
++# End Write Front
++
++
++def write_right():
++    serial_port.write("r")
++# End Write Front
++
++
++def write_back():
++    serial_port.write("b")
++# End Write Front
++
++
++# Main Game Mode Start
++def main_game():
++    root.bind("<Left>", write_left)
++    root.bind("<Right>", write_right)
++    root.bind("<Up>", write_front)
++    root.bind("<Down>", write_back)
++
++    clear_screen()
++    # Use image as background
++    bg = PhotoImage(file="Image Assets/Surface.png")
++    # Use secondary image for frame under camera feed
++    image = Image.open('Image Assets/Imagination.PNG')
++    img2 = image.resize((930, 350))
++    test = ImageTk.PhotoImage(img2)
++
++    # Create Frame with background of image
++    frame1 = Frame(root, bg="white")
++
++    # Add background image to fill screen
++    label1 = Label(frame1, image=bg)
++    label1.pack()
++    # Add secondary frame under camera feed
++    label2 = Label(frame1, image=test)
++    label2.place(x=0, y=525)
++
++    # Add text to frame
++    Label(frame1, text="MISSION", bg="black", foreground="white", font=('Helvetica bold', 35)).place(x=1150, y=50)
++    frame1.pack(side="top", fill=BOTH, expand=False)
++    Label(frame1, text="1. Use the joystick to move the robot", bg="black", foreground="white",
++          font=('Helvetica bold', 20)).place(x=1050, y=125)
++    Label(frame1, text="2. Explore Mars to your hearts content", bg="black", foreground="white",
++          font=('Helvetica bold', 20)).place(x=1050, y=175)
++    Label(frame1, text="3. You will have 90 seconds", bg="black", foreground="white",
++          font=('Helvetica bold', 20)).place(x=1050, y=225)
++
++    # Add Countdown Label
++    timer_label = Label(frame1, text="Time remaining: 90 seconds", bg="black", foreground="white",
++                        font=('Helvetica bold', 30))
++    timer_label.place(x=1000, y=800)
++
++    # forget canvas to allow frame to show in entirety
++    canvas.pack_forget()
++
++    # Captures video feed from stream. MUST BE ON ROVER WI-FI:
++    # Put in videocapture: rtsp://admin:MarsRover23!@192.168.2.99:88/videoMain
++    cap = cv2.VideoCapture(0)
++    start = time.time()
++    timer_duration = 90
++    last_elapsed_time = 0
++
++    # Camera Feed Loop
++    while time.time() - start < 5:
++        # Capture frame of feed
++        ret, frame = cap.read()
++        if not ret:
++            break
++        # Resize the frame and then show
++        small_frame = cv2.resize(frame, (930, 500))
++        cv2.imshow("MARS FEED", small_frame)
++        if cv2.waitKey(1) & 0xFF == ord('q'):
++            break
++        root.update()
++        # Calculate elapsed time
++        elapsed_time = int(time.time() - start)
++        # Update timer label only if a whole second has elapsed
++        if elapsed_time > last_elapsed_time:
++            remaining_time = int(timer_duration - elapsed_time)
++            timer_label.config(text=f"Time remaining: {remaining_time} seconds")
++            # Store current elapsed time for comparison in next iteration
++            last_elapsed_time = elapsed_time
++
++    # Close video capture
++    cap.release()
++    cv2.destroyAllWindows()
++    # Set focus back to root because video feed causes popup that will alt tab, it so need to set focus
++    root.focus_force()
++    Label(frame1, text="MISSION COMPLETE!!!\nReturning to Main Menu", bg="black", fg="red",
++          font=('Helvetica bold', 50)).place(x=200, y=200)
++    # Adds the label to screen and gets rid of camera feed and pauses for 3 seconds
++    root.update()
++    time.sleep(3)
++    # Repack canvas to allow for slides and main screen
++    canvas.pack(fill=BOTH, expand=True)
++    # Get rid of Frame
++    frame1.pack_forget()
++    frame1.destroy()
++    # Call main page
++    main_page()
++# END MAIN GAME
++
++
++# Call the ble_connect() function to establish the serial port connection
++ble_connect()
++
+ main_page()
+ 
+ root.mainloop()
