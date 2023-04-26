@@ -1,4 +1,4 @@
-# Packages needed: pyserial, customtkinter, opencv-python, Pillow, pygame, pip, 
+# Packages needed: pyserial, customtkinter, opencv-python, Pillow, pip,
 from tkinter import *
 import customtkinter
 from PIL import ImageTk, Image
@@ -6,8 +6,7 @@ import time
 import cv2
 import serial
 from serial import SerialException
-import pygame
-from pygame.locals import *
+
 
 # make a window
 root = Tk()
@@ -182,39 +181,19 @@ def main_page():
     buttons.append(community_button)
     buttons.append(life_button)
     move_up(None)
+
+    # Binds keys for keyboard and joystick. The f,b,l,r are for joystick
+    root.bind("<Up>", move_up)
+    root.bind("<Down>", move_down)
+    root.bind("<Left>", select_button)
+    root.bind("<Right>", select_button)
+
+    # Binds for joystick
+    root.bind("<f>", move_up)
+    root.bind("<b>", move_down)
+    root.bind("<l>", select_button)
+    root.bind("<r>", select_button)
     root.update()
-# Main loop for reading joystick input
-    while True:
-        for event in pygame.event.get():
-            if event.type == pygame.JOYAXISMOTION:
-                # Get axis values
-                axis_x = joystick.get_axis(0)
-                axis_y = joystick.get_axis(1)
-                if (abs(axis_x) > 0.75) or (abs(axis_y) >= 0.75):
-                    # Check for axis X
-                    if axis_x >= 0.75:
-                        # Do something for right direction
-                        select_button(None)
-                        break
-                    elif axis_x <= -0.75:
-                        # Do something for left direction
-                        select_button(None)
-                        break
-                    # Check for axis Y
-                    if axis_y >= 0.75:
-                        # Do something for down direction
-                        move_down(None)
-                    elif axis_y <= -0.75:
-                        # Do something for up direction
-                        move_up(None)
-                root.update()
-                pygame.time.delay(50)
-                pygame.event.pump()
-        root.bind("<Up>", move_up)
-        root.bind("<Down>", move_down)
-        root.bind("<Left>", select_button)
-        root.bind("<Right>", select_button)
-        root.update()
 
 # END OF MAIN_PAGE()
 
@@ -225,36 +204,18 @@ def community_mode():
     clear_screen()
     # Create background
     new_background("Image Assets/Curiosity/Slide3.jpg")
-    while True:
-        for event in pygame.event.get():
-            if event.type == pygame.JOYAXISMOTION:
-                # Get axis values
-                axis_x = joystick.get_axis(0)
-                axis_y = joystick.get_axis(1)
-                if (abs(axis_x) > 0.75) or (abs(axis_y) >= 0.75):
-                    # Check for axis X
-                    if axis_x >= 0.75:
-                        # Do something for right direction
-                        swap(None)
-                    elif axis_x <= -0.75:
-                        # Do something for left direction
-                        swap(None)
 
-                    # Check for axis Y
-                    if axis_y >= 0.75:
-                        # Do something for down direction
-                        swap(None)
-                    elif axis_y <= -0.75:
-                        # Do something for up direction
-                        swap(None)
-                root.update()
-                pygame.time.delay(50)
-                pygame.event.pump()
-        root.bind("<Up>", swap)
-        root.bind("<Down>", swap)
-        root.bind("<Left>", swap)
-        root.bind("<Right>", swap)
-        root.update()
+    # binds for keyboard
+    root.bind("<Up>", swap)
+    root.bind("<Down>", swap)
+    root.bind("<Left>", swap)
+    root.bind("<Right>", swap)
+    # Binds for joystick
+    root.bind("<f>", swap)
+    root.bind("<l>", swap)
+    root.bind("<r>", swap)
+    root.bind("<b>", swap)
+    root.update()
 # END CAREER MODE FUNCTION
 
 
@@ -264,36 +225,18 @@ def career_mode():
     clear_screen()
     # Create background
     new_background("Image Assets/Career/Slide18.jpg")
-    while True:
-        for event in pygame.event.get():
-            if event.type == pygame.JOYAXISMOTION:
-                # Get axis values
-                axis_x = joystick.get_axis(0)
-                axis_y = joystick.get_axis(1)
-                if (abs(axis_x) > 0.75) or (abs(axis_y) >= 0.75):
-                    # Check for axis X
-                    if axis_x >= 0.75:
-                        # Do something for right direction
-                        swap_career(None)
-                    elif axis_x <= -0.75:
-                        # Do something for left direction
-                        swap_career(None)
 
-                    # Check for axis Y
-                    if axis_y >= 0.75:
-                        # Do something for down direction
-                        swap_career(None)
-                    elif axis_y <= -0.75:
-                        # Do something for up direction
-                        swap_career(None)
-                root.update()
-                pygame.time.delay(50)
-                pygame.event.pump()
-        root.bind("<Up>", swap_career)
-        root.bind("<Down>", swap_career)
-        root.bind("<Left>", swap_career)
-        root.bind("<Right>", swap_career)
-        root.update()
+    # Key binds for keyboard
+    root.bind("<Up>", swap_career)
+    root.bind("<Down>", swap_career)
+    root.bind("<Left>", swap_career)
+    root.bind("<Right>", swap_career)
+    # Key binds for joystick
+    root.bind("<f>", swap_career)
+    root.bind("<l>", swap_career)
+    root.bind("<r>", swap_career)
+    root.bind("<b>", swap_career)
+    root.update()
 
 # END Career Mode
 
@@ -304,36 +247,17 @@ def life_mode():
     clear_screen()
     # Create background
     new_background("Image Assets/Life/Slide27.jpg")
-    while True:
-        for event in pygame.event.get():
-            if event.type == pygame.JOYAXISMOTION:
-                # Get axis values
-                axis_x = joystick.get_axis(0)
-                axis_y = joystick.get_axis(1)
-                if (abs(axis_x) > 0.75) or (abs(axis_y) >= 0.75):
-                    # Check for axis X
-                    if axis_x >= 0.75:
-                        # Do something for right direction
-                        swap_life(None)
-                    elif axis_x <= -0.75:
-                        # Do something for left direction
-                        swap_life(None)
-
-                    # Check for axis Y
-                    if axis_y >= 0.75:
-                        # Do something for down direction
-                        swap_life(None)
-                    elif axis_y <= -0.75:
-                        # Do something for up direction
-                        swap_life(None)
-                root.update()
-                pygame.time.delay(50)
-                pygame.event.pump()
-        root.bind("<Up>", swap_life)
-        root.bind("<Down>", swap_life)
-        root.bind("<Left>", swap_life)
-        root.bind("<Right>", swap_life)
-        root.update()
+    # Key binds for keyboard
+    root.bind("<Up>", swap_life)
+    root.bind("<Down>", swap_life)
+    root.bind("<Left>", swap_life)
+    root.bind("<Right>", swap_life)
+    # key binds for joystick
+    root.bind("<f>", swap_life)
+    root.bind("<l>", swap_life)
+    root.bind("<r>", swap_life)
+    root.bind("<b>", swap_life)
+    root.update()
 
 # END LIFE MODE
 
@@ -434,30 +358,13 @@ def main_game():
             timer_label.config(text=f"Time remaining: {remaining_time} seconds")
             # Store current elapsed time for comparison in next iteration
             last_elapsed_time = elapsed_time
-        # Call the main event loop of Tkinter
-        for event in pygame.event.get():
-            if event.type == pygame.JOYAXISMOTION:
-                # Get axis values
-                axis_x = joystick.get_axis(0)
-                axis_y = joystick.get_axis(1)
-                #print(axis_x)
-                if (abs(axis_x) > 0.75) or (abs(axis_y) >= 0.75):
-                    # Check for axis X
-                    if axis_x >= 0.75:
-                        # Do something for right direction
-                        write_right(None)
-                    elif axis_x <= -0.75:
-                        # Do something for left direction
-                        write_left(None)
-                    # Check for axis Y
-                    if axis_y >= 0.75:
-                        # Do something for back direction
-                        write_back(None)
-                    elif axis_y <= -0.75:
-                        # Do something for front direction
-                        write_front(None)
-        pygame.time.delay(50)
-        pygame.event.pump()
+        # Binds for joystick
+        root.bind("<l>", write_left)
+        root.bind("<r>", write_right)
+        root.bind("<f>", write_front)
+        root.bind("<b>", write_back)
+
+        # Binds for keyboard testing
         root.bind("<Left>", write_left)
         root.bind("<Right>", write_right)
         root.bind("<Up>", write_front)
@@ -486,24 +393,7 @@ def main_game():
 
 
 # Call the ble_connect() function to establish the serial port connection
-#bleConnect()
-
-# Initialize pygame
-pygame.init()
-
-# Initialize the joystick module
-pygame.joystick.init()
-
-# I TESTED THIS WITH AN XBOX CONTROLLER. I DO NOT KNOW IF IT WORKS WITH CONSOLE ITSELF
-# Check for connected joysticks
-if pygame.joystick.get_count() > 0:
-    # Get the first joystick
-    joystick = pygame.joystick.Joystick(0)
-    joystick.init()
-    # Print joystick information
-    print("Joystick Name:", joystick.get_name())
-    print("Joystick Axes:", joystick.get_numaxes())
-    print("Joystick Buttons:", joystick.get_numbuttons())
+bleConnect()
 
 
 main_page()
